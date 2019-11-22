@@ -14,35 +14,40 @@ this.monsters = [
     name: "Ankheg",
     curHp: 39,
     maxHp: 39,
-    looted: false
+    looted: false,
+    dead: false
   },
 
   {
     name: "Goblin",
     curHp: 7,
     maxHp: 7,
-    looted: false
+    looted: false,
+    dead: false
   },
 
   {
     name: "Tarrasque",
     curHp: 676,
     maxHp: 676,
-    looted: false
+    looted: false,
+    dead: false
   },
 
   {
     name: "Ancient Blue Dragon",
     curHp: 481,
     maxHp: 481,
-    looted: false
+    looted: false,
+    dead: false
   },
 
   {
     name: "Troll",
     curHp: 84,
     maxHp: 84,
-    looted: false
+    looted: false,
+    dead: false
   }
 ];
 this.rareLoot = [
@@ -70,9 +75,9 @@ client.on("message", msg => {
     msg.reply(
       [
         "MonsterBot Help",
-        "!monster -    Make a random monster appear!",
+        "!monster - Make a random monster appear!",
         "!attack [N] - Attack the monster! [N] is any number.",
-        "!loot -       Loot the monster once you've defeated it!"
+        "!loot - Loot the monster once you've defeated it!"
       ].join("\n")
     );
   }
@@ -143,6 +148,13 @@ client.on("message", msg => {
         this.activeMonster.curHp = 0;
         messageText =
           "**You did it!** The " + this.activeMonster.name + " is slain!";
+
+        if (this.activeMonster.dead == false) {
+          this.activeMonster.dead = true;
+        } else {
+          messageText =
+            "Srsly... Just `!loot` the " + this.activeMonster.name + ".";
+        }
       }
 
       // Scenario 2: Didn't Kill
