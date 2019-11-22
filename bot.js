@@ -177,7 +177,10 @@ client.on("message", msg => {
             " The " +
             this.activeMonster.name +
             " was hurt. The fight has just begun!";
-        } else if (this.activeMonster.curHp <= this.activeMonster.maxHp / 2) {
+        } else if (
+          this.activeMonster.curHp <= this.activeMonster.maxHp / 2 &&
+          this.activeMonster.curHp > this.activeMonster.maxHp / 4
+        ) {
           messageText +=
             emote +
             " The " +
