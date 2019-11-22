@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const auth = require("./auth.json");
+const dice = require("./dice.js");
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -76,7 +77,7 @@ client.on("message", msg => {
       [
         "MonsterBot Help",
         "!monster - Make a random monster appear!",
-        "!attack [N] - Attack the monster! [N] is any number.",
+        "!attack NdN - Attack the monster! Where NdN is like 2d6.",
         "!loot - Loot the monster once you've defeated it!"
       ].join("\n")
     );
@@ -104,9 +105,8 @@ client.on("message", msg => {
    * Attack Functionality
    */
   if (args[0] === "!attack") {
-    //console.log("command: " + args[0] + " " + args[1]);
-    let damage = args[1];
     let messageText = "";
+    let damage = dice.roll(args[1]);
 
     /**
      * There are 3 scenarios for damage:
@@ -132,11 +132,13 @@ client.on("message", msg => {
 
     // Scenario 2: LOL
     if (damage == 0) {
-      messageText = "**LOL!**";
+      messageText = "**LOL!** Attack did " + damage + " damage!\n";
     }
 
     // Scenario 3: Damage
     if (damage > 0) {
+      messageText = "Attack did " + damage + " damage!\n";
+
       /**
        * Here we have 2 scenarios
        * 1. damage killed the monster
@@ -146,13 +148,13 @@ client.on("message", msg => {
       // Scenario 1: Killed
       if (this.activeMonster.curHp - damage <= 0) {
         this.activeMonster.curHp = 0;
-        messageText =
+        messageText +=
           "**You did it!** The " + this.activeMonster.name + " is slain!";
 
         if (this.activeMonster.dead == false) {
           this.activeMonster.dead = true;
         } else {
-          messageText =
+          messageText +=
             "Srsly... Just `!loot` the " + this.activeMonster.name + ".";
         }
       }
@@ -165,14 +167,14 @@ client.on("message", msg => {
         }
 
         this.activeMonster.curHp -= damage;
-        messageText =
+        messageText +=
           emote +
           " The " +
           this.activeMonster.name +
           " took some damage. The fight has just begun!";
 
         if (this.activeMonster.curHp <= this.activeMonster.maxHp / 2) {
-          messageText =
+          messageText +=
             emote +
             " The " +
             this.activeMonster.name +
@@ -180,7 +182,7 @@ client.on("message", msg => {
         }
 
         if (this.activeMonster.curHp <= this.activeMonster.maxHp / 3) {
-          messageText =
+          messageText +=
             emote +
             " The " +
             this.activeMonster.name +
