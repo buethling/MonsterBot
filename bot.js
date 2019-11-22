@@ -188,28 +188,29 @@ client.on("message", msg => {
     let messageText =
       "The " + this.activeMonster.name + " is not quite dead yet.";
 
-    // You always get gold
-    if (this.activeMonster.curHp <= 0 && this.activeMonster.looted == false) {
-      let money = Math.floor(Math.random() * 1000);
+    // monster must be dead to loot, unless...
+    if (this.activeMonster.curHp <= 0) {
+      if (this.activeMonster.looted == false) {
+        let money = Math.floor(Math.random() * 1000);
 
-      messageText = "You found " + money + "gp!";
+        // You always get gold
+        messageText = "You found " + money + "gp!";
 
-      // You sometimes (15%) get rare loot
-      let chance = Math.floor(Math.random() * 100);
-      if (chance > 0 && chance < 15) {
-        let lootRoll = Math.floor(Math.random() * this.rareLoot.length);
-        let rareLoot = this.rareLoot[lootRoll];
+        // You sometimes (15%) get rare loot
+        let chance = Math.floor(Math.random() * 100);
+        if (chance > 0 && chance < 15) {
+          let lootRoll = Math.floor(Math.random() * this.rareLoot.length);
+          let rareLoot = this.rareLoot[lootRoll];
 
-        messageText +=
-          " You also found the following rare loot! [" + rareLoot.name + "]";
+          messageText +=
+            " You also found the following rare loot! [" + rareLoot.name + "]";
+        }
+
+        this.activeMonster.looted = true;
+      } else {
+        messageText =
+          "This monster's been looted! Seems like someone else rolled really well on their slight of hand check...";
       }
-
-      this.activeMonster.looted = true;
-    }
-
-    if (this.activeMonster.curHp <= 0 && this.activeMonster.looted == true) {
-      messageText =
-        "This monster's been looted! Seems like someone else rolled really well on their slight of hand check...";
     }
 
     msg.reply(messageText);
