@@ -78,7 +78,8 @@ client.on("message", msg => {
         "MonsterBot Help",
         "!monster - Make a random monster appear!",
         "!attack NdN - Attack the monster! Where NdN is like 2d6.",
-        "!loot - Loot the monster once you've defeated it!"
+        "!loot - Loot the monster once you've defeated it!",
+        "!flute - Rejoice!"
       ].join("\n")
     );
   }
@@ -137,7 +138,7 @@ client.on("message", msg => {
 
     // Scenario 3: Damage
     if (damage > 0) {
-      messageText = "Attack did " + damage + " damage!\n";
+      messageText = "your attack did " + damage + " damage!\n";
 
       /**
        * Here we have 2 scenarios
@@ -148,10 +149,10 @@ client.on("message", msg => {
       // Scenario 1: Killed
       if (this.activeMonster.curHp - damage <= 0) {
         this.activeMonster.curHp = 0;
-        messageText +=
-          "**You did it!** The " + this.activeMonster.name + " is slain!";
 
         if (this.activeMonster.dead == false) {
+          messageText +=
+            "**You did it!** The " + this.activeMonster.name + " is slain!";
           this.activeMonster.dead = true;
         } else {
           messageText +=
@@ -160,33 +161,34 @@ client.on("message", msg => {
       }
 
       // Scenario 2: Didn't Kill
-      if (this.activeMonster.curHp - damage > 0) {
+      else if (this.activeMonster.curHp - damage > 0) {
         let emote = "**Ouch!**";
         if (damage < 5) {
           emote = "**LOL!**";
         }
 
         this.activeMonster.curHp -= damage;
-        messageText +=
-          emote +
-          " The " +
-          this.activeMonster.name +
-          " took some damage. The fight has just begun!";
-
-        if (this.activeMonster.curHp <= this.activeMonster.maxHp / 2) {
+        if (
+          this.activeMonster.curHp <= this.activeMonster.maxHp &&
+          this.activeMonster.curHp > this.activeMonster.maxHp / 2
+        ) {
+          messageText +=
+            emote +
+            " The " +
+            this.activeMonster.name +
+            " was hurt. The fight has just begun!";
+        } else if (this.activeMonster.curHp <= this.activeMonster.maxHp / 2) {
           messageText +=
             emote +
             " The " +
             this.activeMonster.name +
             " is bloodied. Keep fighting!";
-        }
-
-        if (this.activeMonster.curHp <= this.activeMonster.maxHp / 3) {
+        } else if (this.activeMonster.curHp <= this.activeMonster.maxHp / 4) {
           messageText +=
             emote +
             " The " +
             this.activeMonster.name +
-            " is looking really bad. Finish it off!";
+            " is on death's door. Finish it off!";
         }
       }
     }
